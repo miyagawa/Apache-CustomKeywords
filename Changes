@@ -1,4 +1,8 @@
 Revision history for Perl extension Apache::CustomKeywords
 
+0.02  Wed Aug  7 17:48:25 JST 2002
+	- Now single word like "google" works
+	- Displays error message rather than 404
+
 0.01  Tue Aug  6 21:35:37 2002
 	- original version

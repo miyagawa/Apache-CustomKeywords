@@ -50,7 +50,8 @@ CONFIGURATION
         configure "httpd.conf" with psuedo MSN version and set up your Hosts
         file ("/etc/hosts" in Un*x, "Windows/Hosts" or
         "windows/system/drivers/etc/Hosts" in Win32) or local DNS so that
-        "auto.search.msn.com" points to the server this module is installed.
+        "auto.search.msn.com" points to the server where this module is
+        installed.
 
 NOTE
     If you put ":" or "@" as a query in Location: box, MSIE recognizes it as

@@ -2,7 +2,7 @@ package Apache::CustomKeywords;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = 0.01;
+$VERSION = 0.02;
 
 use Apache::Constants qw(:response);
 use Apache::ModuleConfig;
@@ -35,7 +35,9 @@ sub handler($$) {
 	    $r->header_out(Location => $location);
 	    return REDIRECT;
 	}
-	return NOT_FOUND;
+	$r->send_http_header('text/html');
+	$r->print(__PACKAGE__ . ": Can't parse tokens.");
+	return OK;
     }
 }
 
@@ -46,7 +48,7 @@ sub convert_query {
     my $query = $class->query($r);
 
     # registerd command?
-    $query =~ s/^(\S+)\s+// or return;
+    $query =~ s/^(\S+)\s*// or return;
     my $engine = $keyword->{$1} or return;
     $engine =~ s/%s/$class->escape_it($query)/eg;
     return $engine;
@@ -144,7 +146,8 @@ proxy setting.
 configure C<httpd.conf> with psuedo MSN version and set up your Hosts
 file (C</etc/hosts> in Un*x, C<Windows/Hosts> or
 C<windows/system/drivers/etc/Hosts> in Win32) or local DNS so that
-C<auto.search.msn.com> points to the server this module is installed.
+C<auto.search.msn.com> points to the server where this module is
+installed.
 
 =back
 
