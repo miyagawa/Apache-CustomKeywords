@@ -52,8 +52,7 @@ sub convert_query {
 	return $engine;
     }
     elsif (my $default = $cfg->{CustomKeywordsDefault}) {
-	my $engine = $keyword->{$default};
-	return $class->interpolate($engine, join(' ', $1, $query));
+	return $class->interpolate($keyword->{$default}, join(' ', $1, $query));
     }
 }
 
