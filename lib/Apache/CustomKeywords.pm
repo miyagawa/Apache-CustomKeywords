@@ -2,7 +2,7 @@ package Apache::CustomKeywords;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = 0.02;
+$VERSION = 0.03;
 
 use Apache::Constants qw(:response);
 use Apache::ModuleConfig;
@@ -46,10 +46,19 @@ sub convert_query {
     my $cfg = Apache::ModuleConfig->get($r) || {};
     my $keyword = $cfg->{CustomKeywords} or return;
     my $query = $class->query($r);
-
-    # registerd command?
     $query =~ s/^(\S+)\s*// or return;
-    my $engine = $keyword->{$1} or return;
+    if (my $engine = $keyword->{$1}) {
+	return $class->interpolate($engine, $query);
+	return $engine;
+    }
+    elsif (my $default = $cfg->{CustomKeywordsDefault}) {
+	my $engine = $keyword->{$default};
+	return $class->interpolate($engine, join(' ', $1, $query));
+    }
+}
+
+sub interpolate {
+    my($class, $engine, $query) = @_;
     $engine =~ s/%s/$class->escape_it($query)/eg;
     return $engine;
 }
@@ -68,6 +77,7 @@ sub query {
 
 sub CustomKeyword($$$$) {
     my($cfg, $parms, $arg1, $arg2) = @_;
+    $cfg->{CustomKeywordsDefault} ||= $arg1;
     $cfg->{CustomKeywords} ||= {};
     $cfg->{CustomKeywords}->{$arg1} = $arg2;
 }
@@ -110,6 +120,9 @@ With C<CustomKeyword> settings shown in L</"SYNOPSIS">, you type
 C<cpan CustomKeywords> or C<google blah blah> in your browser's
 Location: box, then you will be redirected to the page you wanna go
 to!
+
+If your command is not recognized by this module, the first
+C<CustomKeyword> entry is used as default.
 
 Here's the way this handler works:
 
